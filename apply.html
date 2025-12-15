@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Apply for Funding – TitanCapital</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="assets/css/style.css">
+
+<style>
+.apply-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
+}
+
+.step { display: none; }
+.step.active { display: block; }
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #eee;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: #00b16a;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.step-indicator div {
+    flex: 1;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #ccc;
+}
+.step-indicator .active {
+    color: #00b16a;
+    border-color: #00b16a;
+}
+.success {
+    text-align: center;
+    display: none;
+}
+.success .check {
+    font-size: 60px;
+    color: #00b16a;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+<nav>
+    <h2>TitanCapital</h2>
+    <div>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="funding.html">Funding Options</a>
+        <a href="apply.html">Apply</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="blog.html">Blog</a>
+        <a href="contact.html">Contact</a>
+    </div>
+</nav>
+</header>
+
+<section class="section">
+<div class="apply-container">
+
+    <h2>Funding Application</h2>
+
+    <!-- Progress bar -->
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+    <!-- Step indicator -->
+    <div class="step-indicator">
+        <div id="s1" class="active">Basic Info</div>
+        <div id="s2">Funding</div>
+        <div id="s3">Financial</div>
+        <div id="s4">Submit</div>
+    </div>
+
+    <form id="appForm">
+
+        <!-- STEP 1 -->
+        <div class="step active">
+            <label>Full Name</label>
+            <input type="text" name="name" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Phone</label>
+            <input type="tel" name="phone" required>
+
+            <button type="button" class="next-btn btn-main">Next</button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step">
+            <label>Amount Requested</label>
+            <input type="number" name="amount" required>
+
+            <label>Purpose</label>
+            <textarea name="purpose" required></textarea>
+
+            <button type="button" class="back-btn btn-main" style="background:#ccc;">Back</button>
+            <button type="button" class="next-btn btn-main">Next</button>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step">
+            <label>Annual Revenue</label>
+            <input type="number" name="revenue">
+
+            <label>Credit Score</label>
+            <select name="credit">
+                <option value="">Select</option>
+                <option>300-579</option>
+                <option>580-669</option>
+                <option>670-739</option>
+                <option>740-799</option>
+                <option>800+</option>
+            </select>
+
+            <button type="button" class="back-btn btn-main" style="background:#ccc;">Back</button>
+            <button type="button" class="next-btn btn-main">Next</button>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step">
+            <h3>Review & Submit</h3>
+            <p>Once you submit, you’ll receive a reference ID.</p>
+
+            <button type="button" class="back-btn btn-main" style="background:#ccc;">Back</button>
+            <button type="submit" class="btn-main">Submit Application</button>
+        </div>
+
+    </form>
+
+    <!-- SUCCESS MESSAGE -->
+    <div class="success" id="successBox">
+        <div class="check">✔</div>
+        <h2>Application Submitted!</h2>
+        <p>Your reference ID:</p>
+        <h3 id="refID"></h3>
+        <a href="index.html" class="btn-main">Return Home</a>
+    </div>
+
+</div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    let current = 0;
+    const steps = document.querySelectorAll(".step");
+    const progress = document.getElementById("progress");
+    const indicators = ["s1","s2","s3","s4"].map(id => document.getElementById(id));
+
+    function showStep(i) {
+        steps.forEach(step => step.classList.remove("active"));
+        steps[i].classList.add("active");
+
+        indicators.forEach(ind => ind.classList.remove("active"));
+        indicators[i].classList.add("active");
+
+        progress.style.width = (i / (steps.length - 1)) * 100 + "%";
+    }
+
+    document.querySelectorAll(".next-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            current = Math.min(current + 1, steps.length - 1);
+            showStep(current);
+        });
+    });
+
+    document.querySelectorAll(".back-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            current = Math.max(current - 1, 0);
+            showStep(current);
+        });
+    });
+
+    // FINAL SUBMIT — SEND TO BACKEND
+    document.getElementById("appForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        const res = await fetch("/api/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+            document.getElementById("appForm").style.display = "none";
+            document.getElementById("successBox").style.display = "block";
+            document.getElementById("refID").innerText = result.reference;
+            progress.style.width = "100%";
+        } else {
+            alert("Error: " + result.message);
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>

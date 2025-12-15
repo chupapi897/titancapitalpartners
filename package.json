@@ -1,0 +1,8 @@
+{
+  "name": "titancapital",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "resend": "^1.1.0"
+  }
+}
