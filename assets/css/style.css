@@ -166,3 +166,26 @@ button {
 button {
     pointer-events: auto;
 }
+
+/* 🔥 FORCE FORM ABOVE EVERYTHING */
+section,
+.apply-container,
+form {
+    position: relative;
+    z-index: 10;
+}
+
+/* 🔥 KILL ANY HERO OVERLAY INTERACTION */
+.hero,
+.hero::before {
+    pointer-events: none;
+}
+
+/* 🔥 FORCE BUTTON TO RECEIVE CLICKS */
+button,
+.btn-main {
+    position: relative;
+    z-index: 20;
+    pointer-events: auto;
+}
+
