@@ -8,6 +8,7 @@ export default async function handler(req, res) {
   const reference = "TC-" + Math.floor(100000 + Math.random() * 900000);
 
   const message = `
+const message = `
 📩 *NEW FUNDING APPLICATION*
 
 👤 Name: ${data.name}
@@ -17,11 +18,14 @@ export default async function handler(req, res) {
 💰 Amount: $${data.amount}
 📝 Purpose: ${data.purpose}
 
+🚀 *Short Pitch*
+${data.pitch}
+
 📊 Revenue: ${data.revenue || "N/A"}
 📈 Credit: ${data.credit || "N/A"}
 
 🆔 Reference: ${reference}
-  `;
+`;
 
   const telegramURL = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
 
