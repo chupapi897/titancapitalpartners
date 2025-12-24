@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   const reference = "TC-" + Math.floor(100000 + Math.random() * 900000);
 
   const message = `
-const message = `
 📩 *NEW FUNDING APPLICATION*
 
 👤 Name: ${data.name}
